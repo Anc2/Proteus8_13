@@ -1,0 +1,97 @@
+// include the library code:
+#include <LiquidCrystal.h>
+
+//show where the actuator and sensors are connected
+#define pirPin 8
+#define pushButtonPin 9
+#define relayPin 10
+
+bool flag = 1;
+
+// state where the arduino pin number it is connected to on LCD
+const int rs = 2, en = 3, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+void setup() {
+  // set up the LCD's number of columns and rows:
+  lcd.begin(16, 2);
+  //begin the serial monitor comm.
+  Serial.begin(9600);
+  //state the fxn for the inputs and outputs
+  pinMode(pirPin, INPUT);
+  pinMode(pushButtonPin, INPUT_PULLUP);
+  pinMode(relayPin, OUTPUT);
+  // Print a welcome message to the LCD.
+  lcd.setCursor(0,0);
+  lcd.print("HELLO THERE?");
+  delay(100);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("MOTION BASED");
+  lcd.setCursor(0,0);
+  lcd.print("HOME AUTOMATION");
+  delay(100);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("SIMULATION");
+  lcd.clear();
+}
+
+void turnOnBulb(){
+  digitalWrite(relayPin, HIGH);
+  Serial.println("LIGHT BULB TURNED ON");
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("LIGHT BULB");
+  lcd.setCursor(0, 1);
+  lcd.print("TURNED ON");
+}
+
+void turnOffBulb(){
+  digitalWrite(relayPin, LOW);
+  Serial.println("LIGHT BULB TURNED OFF");
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("LIGHT BULB");
+  lcd.setCursor(0, 1);
+  lcd.print("TURNED OFF");
+}
+
+void loop() {
+  //read the pir sensor
+  bool readPir = digitalRead(pirPin);
+
+    if (readPir == HIGH) {
+      flag = 1;
+    } 
+    else {
+      flag = 0;
+    }
+
+    // set the LED with the ledState of the variable:
+    // digitalWrite(ledPin, ledState);
+
+  //use an if condition to check for the motion
+  if(flag == 1){
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("MOTION DETECTED");
+      Serial.println("MOTION DETECTED");
+      delay(50);
+      turnOnBulb();
+  }
+
+  else if(flag == 0){
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("   NO MOTION");
+      lcd.setCursor(0,1);
+      lcd.print("    DETECTED");
+      Serial.println("NO MOTION DETECTED");
+      delay(50);
+      turnOffBulb();
+  }
+  }
+  delay(200);
+}
+
